@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\JwtService\JwtService;
+use App\Services\JwtService\JwtServiceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(JwtServiceInterface::class, JwtService::class);
     }
 
     /**
@@ -19,6 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Model::shouldBeStrict(! $this->app->isProduction());
     }
 }

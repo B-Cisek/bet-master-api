@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Gender;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,7 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasUuids, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -23,8 +24,8 @@ class User extends Authenticatable implements JWTSubject
         'username',
         'email',
         'password',
-        'firstname',
-        'lastname',
+        'first_name',
+        'last_name',
         'birth_date',
         'pesel',
         'gender',
@@ -61,6 +62,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->getKey();
     }
 
+    /**
+     * @return array<string,string>
+     */
     public function getJWTCustomClaims(): array
     {
         return [];

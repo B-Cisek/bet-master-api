@@ -157,7 +157,10 @@ return [
     'url' => 'The :attribute field must be a valid URL.',
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
+
+    // ADDED
     'pesel' => 'Invalid PESEL',
+    'no_special_characters' => "Special characters not allowed except '-' and '_'",
 
     /*
     |--------------------------------------------------------------------------

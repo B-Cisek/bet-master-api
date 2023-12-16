@@ -1,15 +1,13 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\V1\TheOddsController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-
 Route::group([
-    'middleware' => 'api',
+    'middleware' => 'auth:api',
+    'prefix' => 'v1',
 ], function () {
-    Route::post('/me', [AuthController::class, 'me'])->name('me');
-    Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/sports', [TheOddsController::class, 'sports'])->name('sports');
 });
+
+require __DIR__.'/auth.php';

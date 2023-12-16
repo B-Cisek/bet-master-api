@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Helpers\JwtHelper;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\JwtService\JwtServiceInterface;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -16,6 +18,8 @@ use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 
 class AuthController extends Controller
 {
+    use JwtHelper;
+
     public function __construct(
         private readonly ResponseFactory $responseFactory,
         private readonly JwtServiceInterface $jwtService
@@ -28,17 +32,13 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
+        /**
+         * @var string $token
+         * @phpstan-ignore-next-line
+         */
         $token = Auth::login($user);
 
-        return $this->responseFactory->json([
-            'status' => 'success',
-            'message' => 'User created successfully',
-            'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ],
-        ]);
+        return $this->responseFactory->json($this->registerResponse($user, $token));
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -48,12 +48,7 @@ class AuthController extends Controller
         try {
             $token = $this->jwtService->login($credentials);
 
-            return $this->responseFactory->json([
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => auth()->factory()->getTTL() * 60,
-                'user' => auth()->user(),
-            ]);
+            return $this->responseFactory->json($this->tokenResponse($token));
         } catch (UserNotDefinedException $e) {
             return $this->responseFactory->json([
                 'message' => $e->getMessage(),
@@ -66,12 +61,7 @@ class AuthController extends Controller
         try {
             $token = $this->jwtService->refresh();
 
-            return $this->responseFactory->json([
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => auth()->factory()->getTTL() * 60,
-                'user' => auth()->user(),
-            ]);
+            return $this->responseFactory->json($this->tokenResponse($token));
         } catch (\Exception $e) {
             return $this->responseFactory->json([
                 'message' => $e->getMessage(),
@@ -93,7 +83,9 @@ class AuthController extends Controller
     public function me(): JsonResponse
     {
         try {
-            return $this->responseFactory->json($this->jwtService->me());
+            $user = $this->jwtService->me();
+
+            return $this->responseFactory->json(new UserResource($user));
         } catch (UserNotDefinedException $e) {
             return $this->responseFactory->json([
                 'message' => $e->getMessage(),

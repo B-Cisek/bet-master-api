@@ -14,5 +14,5 @@ parameters:
 #
 #    excludePaths:
 #        - ./*/*/FileToBeExcluded.php
-#
-#    checkMissingIterableValueType: false
+
+    checkMissingIterableValueType: false

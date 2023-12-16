@@ -18,7 +18,7 @@ readonly class JwtService implements JwtServiceInterface
         /** @var string|bool $token */
         $token = Auth::attempt($credentials);
 
-        if (! $token) {
+        if (is_bool($token)) {
             throw new UserNotDefinedException;
         }
 

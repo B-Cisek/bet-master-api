@@ -5,7 +5,7 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class Pesel implements ValidationRule
+class Email implements ValidationRule
 {
     /**
      * Run the validation rule.
@@ -14,8 +14,8 @@ class Pesel implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! is_numeric($value) || ! (strlen((string) $value) === 11)) {
-            $fail(__('validation.pesel'));
+        if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            $fail(__('validation.email'));
         }
     }
 }

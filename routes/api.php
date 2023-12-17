@@ -7,7 +7,8 @@ Route::group([
     'middleware' => 'auth:api',
     'prefix' => 'v1',
 ], function () {
-    Route::get('/sports', [TheOddsController::class, 'sports'])->name('sports');
+    Route::get('/countries', [TheOddsController::class, 'countries'])->name('countries');
+    Route::get('/leagues/country/{id}', [TheOddsController::class, 'leagues'])->name('leagues');
 });
 
 require __DIR__.'/auth.php';
